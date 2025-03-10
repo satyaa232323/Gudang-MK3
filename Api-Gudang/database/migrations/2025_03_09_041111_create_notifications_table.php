@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignId('id_product')->constrained('products');
-            $table->text('pesan');
-            $table->enum('status', ['unread', 'read'])->default('unread');
+            $table->text(column: 'pesan');
+            $table->enum(column: 'status', allowed: ['unread', 'read'])->default(value: 'unread');
 
         });
     }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('id_product')->constrained('products');
+            $table->foreignId(column: 'id_product')->constrained('products');
             $table->foreignId('id_user')->constrained('users');
             $table->enum('jenis_transaksi', ['pending', 'success', 'cancel'])->default('pending');
             $table->integer(column: 'jumlah');

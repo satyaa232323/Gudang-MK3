@@ -9,26 +9,29 @@ use Illuminate\Support\Facades\Route;
 // Route::apiResource(name: '/products', controller: ProductController::class)->only([
 //     'index', 'show'
 // ]);
+Route::apiResource(name: '/products', controller: ProductController::class)->only([
+    'index',
+    'show'
+]);
+Route::middleware(['auth:sanctum'])->group(function () {
 
-Route::middleware(['auth:sanctum'])->group( function () {
-    
     // auth
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth:sanctum');
-    
+
     // endauth
-    
+
     // product
-     Route::apiResource(name: '/products', controller: ProductController::class);
-     Route::put('/productUpdate/{id}', [ProductController::class, 'update']);
-     Route::delete('/productDelete/{id}', [ProductController::class, 'destroy']);
+    Route::apiResource(name: '/products', controller: ProductController::class);
+    Route::put('/productUpdate/{id}', [ProductController::class, 'update']);
+    Route::delete('/productDelete/{id}', [ProductController::class, 'destroy']);
     // endproduct
-    
+
     //  categories
-     Route::apiResource(name: '/categories', controller: CategoryController::class);
-     Route::put('/categoriesUpdate/{id}', action: [CategoryController::class, 'update']);
-     Route::delete('/categoriesDelete/{id}', action: [CategoryController::class, 'destroy']);
+    Route::apiResource(name: '/categories', controller: CategoryController::class);
+    Route::put('/categoriesUpdate/{id}', action: [CategoryController::class, 'update']);
+    Route::delete('/categoriesDelete/{id}', action: [CategoryController::class, 'destroy']);
     //  end categories
-    
+
 
     // categories 
 

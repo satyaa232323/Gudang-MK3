@@ -20,7 +20,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return response()->json();
+        return response()->json([
+            'status' => 'success',
+            'data' => Auth::user()
+        ], 200);
+
+       
     }
 
     /**
@@ -34,6 +39,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return response()->json();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Logged out'
+        ]);
     }
 }

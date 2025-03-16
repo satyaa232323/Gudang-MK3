@@ -6,13 +6,6 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
-// Route::apiResource(name: '/products', controller: ProductController::class)->only([
-//     'index', 'show'
-// ]);
-Route::apiResource(name: '/products', controller: ProductController::class)->only([
-    'index',
-    'show'
-]);
 Route::middleware(['auth:sanctum'])->group(function () {
 
     // auth

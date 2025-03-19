@@ -19,9 +19,11 @@ class ProductController extends Controller
                 'status' => 'Barang tidak ditemukan',
                 'data' => null
             ], 200);
-        } else {
+        } 
+            else {
+    
             return response()->json([
-                'status' => 'success',
+                'status' => 'data berhasil masuk',
                 'data' => $products
             ], 200);
         }
@@ -95,7 +97,7 @@ class ProductController extends Controller
         
         $product = product::findOrFail($id);
         if (!$product) {
-            return response()->json([
+            return response()->json([   
                 'status' => 'error',
                 'message' => 'Product not found'
             ], 404);

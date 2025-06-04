@@ -14,7 +14,8 @@ class product extends Model
         'nama_barang',
         'stok',
         'harga',
-        'category_id'
+        'category_id',
+        'min_stock'
     ];
 
     public function category()
@@ -30,5 +31,18 @@ class product extends Model
     public function notifications()
     {
         return $this->hasMany(related: notification::class);
+    }
+
+    public function checkLowStock()
+    {
+        if ($this->stok <= $this->min_stock) {
+            // Create notification
+            $this->notifications()->create([
+                'pesan' => "Stok {$this->nama_barang} sudah mencapai batas minimum (tersisa: {$this->stok})",
+                'status' => 'unread'
+            ]);
+            return true;
+        }
+        return false;
     }
 }

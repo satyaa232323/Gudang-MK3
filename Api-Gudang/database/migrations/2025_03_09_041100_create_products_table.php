@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string(column: 'nama_barang');
             $table->integer(column: 'stok');
             $table->decimal(column: 'harga', total: 10, places: 2);
-            $table->foreignId('category_id')->constrained('categories');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
+            $table->integer('min_stock')->default(10);
+            $table->timestamps();
         });
     }
 

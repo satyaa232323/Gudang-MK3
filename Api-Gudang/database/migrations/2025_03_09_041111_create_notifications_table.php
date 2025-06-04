@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->foreignId('id_product')->constrained('products');
+            $table->foreignId('id_product')->constrained('products')->onDelete('cascade');
             $table->text(column: 'pesan');
             $table->enum(column: 'status', allowed: ['unread', 'read'])->default(value: 'unread');
-
+            $table->timestamps();
         });
     }
 

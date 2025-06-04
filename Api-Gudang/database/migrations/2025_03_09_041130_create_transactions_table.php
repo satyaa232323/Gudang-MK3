@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->foreignId(column: 'id_product')->constrained('products');
+            $table->foreignId(column: 'id_product')->constrained('products')->onDelete('cascade');
             $table->foreignId('id_user')->constrained('users');
-            $table->enum('jenis_transaksi', ['pending', 'success', 'cancel'])->default('pending');
+            $table->enum('jenis_transaksi', allowed: ['masuk', 'keluar'])->default('masuk');
             $table->integer(column: 'jumlah');
             $table->date('tanggal');
+            $table->timestamps();
         });
     }
 

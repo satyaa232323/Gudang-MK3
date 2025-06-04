@@ -14,14 +14,12 @@ class CategoryController extends Controller
     {
         $categories = category::all();
 
-        if(!$categories){
+        if (!$categories) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'barang tidak ditemukan'
             ], 404);
-
-        }
-        else {
+        } else {
             return response()->json([
                 'status' => 'success',
                 'data' => $categories
@@ -53,13 +51,12 @@ class CategoryController extends Controller
     {
         $category = category::find($id);
 
-        if(!$category){
+        if (!$category) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'kategori tidak ditemukan'
             ], 404);
-        }
-        else {
+        } else {
             return response()->json([
                 'status' => 'success',
                 'data' => $category
@@ -72,7 +69,25 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'nama_kategori' => 'required',
+            'description' => 'required'
+        ]);
+
+        $category = category::find($id);
+
+        if (!$category) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'kategori tidak ditemukan'
+            ], 404);
+        } else {
+            $category->update($request->all());
+            return response()->json([
+                'status' => 'success diedit',
+                'data' => $category
+            ], 200);
+        }
     }
 
     /**
@@ -80,6 +95,19 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $categories = category::findOrFail($id);
+
+        if (!$categories) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'kategori tidak ditemukan'
+            ], 404);
+        } else {
+            $categories->delete();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'kategori berhasil dihapus'
+            ], 200);
+        }
     }
 }

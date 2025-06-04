@@ -5,6 +5,9 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -12,7 +15,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // auth
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth:sanctum');
 
+    Route::get('/users', [AuthenticatedSessionController::class, 'index']);
+
     // endauth
+
+
+    // user
+    Route::get('/user', [UserController::class, 'getAuthenticatedUser']);
+    // enduser
+
 
     // product
     Route::apiResource(name: '/products', controller: ProductController::class);
@@ -27,10 +38,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //  end categories
 
 
-    // categories 
+    // notifications
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::patch('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
 
-    Route::apiResource(name: '/notification', controller: NotificationController::class);
-    //  end product
+    // categories 
+    Route::apiResource(name: '/categories', controller: CategoryController::class);
+    //  end categories
+
+
+    // transaction
+    Route::apiResource(name: '/transactions', controller: TransactionController::class);
+    Route::put('/transaction/{id}', [TransactionController::class, 'update']);
+    Route::delete('/transactionDelete/{id}', action: [Transaction::class, 'destroy']);
 });
 
 Route::post('/register', [RegisteredUserController::class, 'store']);

@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\product;
+use App\Models\Product;
+use App\Models\notification;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -12,21 +13,15 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $products = product::all();
+        $notifications = notification::with('product')
+            ->where('status', 'unread')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        $productsData = $products->toArray();
-
-        if($productsData['stok'] < 10){
-           return response()->json([
-               'status' => 'Stok hampir habis',
-               'data' => $productsData
-           ], 200);
-        } else {
-            return response()->json([
-                'status' => 'Barang tidak ditemukan',
-                'data' => $productsData
-            ], 200);
-        } 
+        return response()->json([
+            'status' => 'success',
+            'data' => $notifications
+        ], 200);
     }
 
     /**
@@ -59,5 +54,16 @@ class NotificationController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function markAsRead($id)
+    {
+        $notification = notification::findOrFail($id);
+        $notification->update(['status' => 'read']);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Notification marked as read'
+        ], 200);
     }
 }

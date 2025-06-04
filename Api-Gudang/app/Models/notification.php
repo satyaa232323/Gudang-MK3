@@ -14,7 +14,6 @@ class notification extends Model
 
     public function product()
     {
-        return $this->belongsTo(related: Product::class);
+        return $this->belongsTo(related: Product::class, foreignKey: 'id_product');
     }
-    
 }

@@ -30,6 +30,11 @@ class ReportController extends Controller
         ];
 
         $pdf = PDF::loadView('reports.summary', $data);
+
+    
         return $pdf->download('laporan-gudang-' . now()->format('Y-m-d') . '.pdf');
+
+        
+        
     }
 }

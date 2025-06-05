@@ -15,13 +15,14 @@ class NotificationController extends Controller
     public function index()
     {
         $notifications = notification::with('product')
-            ->where('status', 'unread')
             ->orderBy('created_at', 'desc')
+            ->take(5)  // Limit to 5 most recent notifications
             ->get();
 
         return response()->json([
             'status' => 'success',
-            'data' => $notifications
+            'data' => $notifications,
+            'total_count' => notification::count()
         ], 200);
     }
 
@@ -72,11 +73,11 @@ class NotificationController extends Controller
     public function markAsRead($id)
     {
         $notification = NotificationModel::findOrFail($id);
-        $notification->update(['status' => 'read']);
+        $notification->delete();  // Delete the notification instead of marking as read
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Notification marked as read'
+            'message' => 'Notification deleted successfully'
         ], 200);
     }
 }

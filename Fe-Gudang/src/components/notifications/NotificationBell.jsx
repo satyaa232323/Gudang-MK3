@@ -32,18 +32,22 @@ const NotificationBell = () => {
 
     const handleClose = () => {
         setAnchorEl(null);
-    };
-
-    const handleMarkAsRead = async (id) => {
+    }; const handleMarkAsRead = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this notification?')) {
+            return;
+        }
         try {
             await axios.patch(`http://127.0.0.1:8000/api/notifications/${id}/mark-as-read`, {}, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            await fetchNotifications();
+            // Remove the notification locally for immediate feedback
+            setNotifications(prev => prev.filter(n => n.id !== id));
+            handleClose(); // Close the menu after action
         } catch (error) {
-            console.error('Error marking notification as read:', error);
+            console.error('Error deleting notification:', error);
+            alert('Failed to delete notification. Please try again.');
         }
     };
 

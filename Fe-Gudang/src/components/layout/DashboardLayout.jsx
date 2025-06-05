@@ -18,7 +18,6 @@ const DashboardLayout = () => {
     totalCategories: 0
   });
   const navigate = useNavigate();
-
   const fetchNotifications = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -30,6 +29,12 @@ const DashboardLayout = () => {
       });
       const data = await response.json();
       setNotifications(data.data || []);
+      // Update the total count if needed
+      if (data.total_count && notifications.length < data.total_count) {
+        document.title = `(${data.total_count}) New Notifications`;
+      } else {
+        document.title = 'Dashboard';
+      }
     } catch (error) {
       console.error('Error fetching notifications:', error);
     }
@@ -306,41 +311,53 @@ const DashboardLayout = () => {
                 >
                   <h6 className="dropdown-header">Alerts Center</h6>
                   {notifications.map((notification) => (
-                    <a
-                      key={notification.id}
-                      className="dropdown-item d-flex align-items-center"
-                      href="#" onClick={async (e) => {
-                        e.preventDefault();
-                        try {
-                          const token = localStorage.getItem('token');
-                          await fetch(`http://127.0.0.1:8000/api/notification/${notification.id}`, {
-                            method: 'PUT',
-                            headers: {
-                              'Authorization': `Bearer ${token}`,
-                              'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({ status: 'read' })
-                          });
-                          fetchNotifications(); // Refresh notifications
-                        } catch (error) {
-                          console.error('Error marking notification as read:', error);
-                        }
-                      }}
-                    >
-                      <div className="mr-3">
-                        <div className="icon-circle bg-warning">
-                          <i className="fas fa-exclamation-triangle text-white" />
+                    <div key={notification.id} className="dropdown-item d-flex align-items-center justify-content-between">
+                      <div className="d-flex align-items-center flex-grow-1" style={{ cursor: 'pointer' }}>
+                        <div className="mr-3">
+                          <div className="icon-circle bg-warning">
+                            <i className="fas fa-exclamation-triangle text-white" />
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <div className="small text-gray-500">
-                          {new Date(notification.created_at).toLocaleDateString()}
+                        <div className="flex-grow-1">
+                          <div className="small text-gray-500">
+                            {new Date(notification.created_at).toLocaleDateString()}
+                          </div>
+                          <span className="font-weight-bold">
+                            {notification.pesan}
+                          </span>
                         </div>
-                        <span className="font-weight-bold">
-                          {notification.pesan}
-                        </span>
+                        <button
+                          className="btn btn-link text-danger"
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            if (!window.confirm('Are you sure you want to delete this notification?')) {
+                              return;
+                            }
+                            try {
+                              const token = localStorage.getItem('token');
+                              await fetch(`http://127.0.0.1:8000/api/notifications/${notification.id}/mark-as-read`, {
+                                method: 'PATCH',
+                                headers: {
+                                  'Authorization': `Bearer ${token}`,
+                                  'Accept': 'application/json'
+                                }
+                              });
+                              // Remove the notification locally for immediate feedback
+                              setNotifications(prev => prev.filter(n => n.id !== notification.id));
+                              // Update page title if needed
+                              if (notifications.length <= 1) {
+                                document.title = 'Dashboard';
+                              }
+                            } catch (error) {
+                              console.error('Error deleting notification:', error);
+                              alert('Failed to delete notification. Please try again.');
+                            }
+                          }}
+                        >
+                          <i className="fas fa-times"></i>
+                        </button>
                       </div>
-                    </a>
+                    </div>
                   ))}
                   {notifications.length === 0 && (
                     <a className="dropdown-item text-center small text-gray-500" href="#">

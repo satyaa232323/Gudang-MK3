@@ -85,8 +85,26 @@ const Dashboard = () => {
         };
         fetchStats();
 
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get('http://127.0.0.1:8000/api/user', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error fetching user:', error);
+            }
+        };
 
-       
+        fetchUser();
+
+
+
+
+
+
     }, [navigate], []);
 
 
@@ -111,7 +129,7 @@ const Dashboard = () => {
                         value={stats.totalProducts}
                         icon="fa-boxes"
                         color="primary"
-                        
+
                     />
                     <StatsCard
                         title="Total Transactions"
@@ -119,7 +137,7 @@ const Dashboard = () => {
                         icon="fa-exchange-alt"
                         color="success"
                     />
-                   
+
                     <StatsCard
                         title="Categories"
                         value={stats.totalCategories}
@@ -140,24 +158,18 @@ const Dashboard = () => {
                     <div className="card shadow mb-4">
                         <div className="card-header py-3">
                             <h6 className="m-0 font-weight-bold text-primary">
-                                Illustrations
+                                Hello {user.name || 'User'}!
                             </h6>
                         </div>
                         <div className="card-body">
                             <div className="text-center">
                             </div>
                             <p>
-                                Add some quality, svg illustrations to your project courtesy
-                                of{" "}
-                                <a target="_blank" rel="nofollow" href="https://undraw.co/">
-                                    unDraw
-                                </a>
-                                , a constantly updated collection of beautiful svg images
-                                that you can use completely free and without attribution!
+                                selamat datang di dashboard Gudang, sebuah aplikasi yang dirancang untuk membantu Anda mengelola produk dan transaksi dengan mudah. Di sini, Anda dapat melihat statistik penting seperti jumlah produk, transaksi, dan kategori yang tersedia.
+
+
                             </p>
-                            <a target="_blank" rel="nofollow" href="https://undraw.co/">
-                                Browse Illustrations on unDraw →
-                            </a>
+
                         </div>
                     </div>
                     {/* Approach */}

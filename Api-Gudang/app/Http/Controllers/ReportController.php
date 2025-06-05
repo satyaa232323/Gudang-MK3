@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
@@ -13,16 +12,24 @@ class ReportController extends Controller
 {
     public function generatePDF()
     {
-        $transactions = Transaction::with('product')->get();
+        // Get products with their categories
+        $products = Product::with('category')
+            ->orderBy('nama_barang')
+            ->get();
 
-        if ($transactions->isEmpty()) {
-            return response()->json([
-                'status' => 'Tidak ada transaksi ditemukan',
-                'data' => null
-            ], 200);
-        }
+        // Get transactions for the last 30 days
+        $transactions = Transaction::with(['product'])
+            ->whereDate('tanggal', '>=', now()->subDays(30))
+            ->orderBy('tanggal', 'desc')
+            ->get();
 
-        $pdf = Pdf::loadView('report', ['transactions' => $transactions]);
-        return $pdf->download('laporan_transaksi.pdf');
+        $data = [
+            'date' => now()->format('d/m/Y'),
+            'products' => $products,
+            'transactions' => $transactions
+        ];
+
+        $pdf = PDF::loadView('reports.summary', $data);
+        return $pdf->download('laporan-gudang-' . now()->format('Y-m-d') . '.pdf');
     }
 }

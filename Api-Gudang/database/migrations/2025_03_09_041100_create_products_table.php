@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer(column: 'stok');
             $table->decimal(column: 'harga', total: 10, places: 2);
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
-            $table->integer('min_stock')->default(10);
+            // $table->integer('min_stock')->default(10);
             $table->timestamps();
         });
     }

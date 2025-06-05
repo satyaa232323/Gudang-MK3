@@ -8,6 +8,7 @@ import axios from 'axios'
 
 const DashboardLayout = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState({
     totalProducts: 0,
@@ -88,6 +89,40 @@ const DashboardLayout = () => {
       setIsLoggingOut(false);
     }
   };
+
+  const handleDownloadReport = async () => {
+    try {
+      setIsDownloading(true);
+      const response = await axios({
+        url: 'http://127.0.0.1:8000/api/report/download',
+        method: 'GET',
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      // Create a blob from the PDF response
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a temporary link and trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `laporan-gudang-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading report:', error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
     <div id="wrapper">
       {/* Sidebar */}
@@ -145,13 +180,27 @@ const DashboardLayout = () => {
             <i className="fas fa-plus" />
             <span>Add Transactions</span>
           </Link>
-        </li>
-
-        <li className="nav-item">
+        </li>        <li className="nav-item">
           <Link className="nav-link" to={"/categories"}>
             <i className="fas fa-tags" />
             <span>Categories</span>
           </Link>
+        </li>
+
+        <li className="nav-item">
+          <a className="nav-link" href="#" onClick={(e) => { e.preventDefault(); handleDownloadReport(); }}>
+            <i className="fas fa-file-pdf" />
+            <span>
+              {isDownloading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+                  Downloading...
+                </>
+              ) : (
+                'Download Report'
+              )}
+            </span>
+          </a>
         </li>
         {/* Divider */}
         <hr className="sidebar-divider" />
@@ -390,7 +439,7 @@ const DashboardLayout = () => {
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
-                >                
+                >
                   <span className="mr-2 d-none d-lg-inline text-gray-600 small">
                     {user ? (user.username || user.name || user.email) : 'user...'}
                   </span>

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId(column: 'id_product')->constrained('products')->onDelete('cascade');
+            $table->foreignId(column: 'id_product')->constrained(table: 'products')->onDelete(action: 'cascade');
             $table->foreignId('id_user')->constrained('users');
             $table->enum('jenis_transaksi', allowed: ['masuk', 'keluar'])->default('masuk');
             $table->integer(column: 'jumlah');

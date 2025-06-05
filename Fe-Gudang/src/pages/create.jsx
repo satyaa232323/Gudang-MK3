@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createProduct, getCategories, getProduct, updateProduct } from '../utils/apiClient'
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Create = () => {
   const navigate = useNavigate();
@@ -88,8 +89,9 @@ const Create = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(''); try {
-      // Verify token existence before submission
+    setError('');
+
+    try {
       const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('Authentication token not found. Please log in again.');
@@ -118,36 +120,49 @@ const Create = () => {
         throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
       }
 
-      console.log('Submitting product data:', {
-        nama_barang: productData.get('nama_barang'),
-        stok: productData.get('stok'),
-        harga: productData.get('harga'),
-        category_id: productData.get('category_id')
-      });
-
-      // If editing, add a _method field for Laravel to handle PUT/PATCH request
       if (isEditing) {
-        if (formData.image instanceof File) {
-          productData.append('_method', 'PUT'); // Laravel recognizes this for form data
-        }
-
         // Update existing product
         const response = await updateProduct(id, productData);
-        toast.success("Product updated successfully!");
+        toast.success('🎉 Produk berhasil diperbarui!', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
         console.log('Update response:', response);
       } else {
         // Create new product
         const response = await createProduct(productData);
-        toast.success("Product created successfully!");
+        toast.success('✨ Produk baru berhasil ditambahkan!', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
         console.log('Create response:', response);
       }
 
-      // Navigate to data page
-      navigate('/data');
+      // Navigate to data page after a short delay
+      setTimeout(() => {
+        navigate('/data');
+      }, 2000);
+
     } catch (err) {
       console.error(isEditing ? "Error updating product:" : "Error creating product:", err);
 
-      // More descriptive error for the user
+      toast.error(err.message || 'Terjadi kesalahan saat menyimpan produk.', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+
       if (err.message.includes('Unauthenticated') || err.message.includes('Unauthorized')) {
         setError('Authentication error. Please log in again.');
         setTimeout(() => {
@@ -163,7 +178,9 @@ const Create = () => {
   };
 
   return (
-    <div>       {/* Begin Page Content */}
+    <div>
+      <ToastContainer />
+      {/* Begin Page Content */}
       <div className="container-fluid">
         {/* Page Heading */}
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
@@ -252,15 +269,7 @@ const Create = () => {
                     </div>
                   </div>
 
-
-
-
-
-
-
-
                   <hr />
-
                   <div className="row">
                     <div className="col text-right">
                       <button

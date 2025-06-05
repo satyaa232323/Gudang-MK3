@@ -16,6 +16,11 @@ class Transaction extends Model
 
     public function product()
     {
-        return $this->belongsTo(related: Product::class);
+        return $this->belongsTo(Product::class, 'id_product');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user');
     }
 }

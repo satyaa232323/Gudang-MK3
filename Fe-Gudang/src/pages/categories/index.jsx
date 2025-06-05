@@ -71,7 +71,7 @@ const Categories = () => {
             setCurrentCategory(null);
 
             // Show success message
-            toast.success(formMode === 'add' ? 'Category created successfully!' : 'Category updated successfully!');
+            toast.success(formMode === 'add' ? 'kategori Berhasil Ditambahkan' : 'Kategori Berhasil Diupdate!');
 
             // Refresh categories
             await fetchCategories();

@@ -34,8 +34,8 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_product' => 'required|exists:products,id',
             'id_user' => 'required|exists:users,id',
+            'id_product' => 'required|exists:products,id',
             'jenis_transaksi' => 'required|string|in:masuk,keluar',
             'jumlah' => 'required|integer|min:1',
             'tanggal' => 'required|date',

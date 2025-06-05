@@ -131,12 +131,7 @@ const Login = () => {
                                             {loading ? 'Logging in...' : 'Login'}
                                         </button>
                                         <hr />
-                                        <a href="#" className="btn btn-google btn-user btn-block">
-                                            <i className="fab fa-google fa-fw" /> Login with Google
-                                        </a>
-                                        <a href="#" className="btn btn-facebook btn-user btn-block">
-                                            <i className="fab fa-facebook-f fa-fw" /> Login with Facebook
-                                        </a>
+                                       
                                     </form>
                                     <hr />                                    <div className="text-center">
                                         <Link className="small" to="/forgot-password">

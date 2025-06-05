@@ -15,7 +15,7 @@ class product extends Model
         'stok',
         'harga',
         'category_id',
-        'min_stock'
+        // 'min_stock'
     ];
 
     public function category()

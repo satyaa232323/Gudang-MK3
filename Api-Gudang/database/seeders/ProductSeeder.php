@@ -18,19 +18,19 @@ class ProductSeeder extends Seeder
                 'nama_barang' => 'Laptop',
                 'stok' => 5,
                 'harga' => 15000000,
-                'category_id' => 1
+                'category_id' => 2
             ],
             [
                 'nama_barang' => 'Smartphone',
                 'stok' => 20,
                 'harga' => 5000000,
-                'category_id' => 2
+                'category_id' => 3
             ],
             [
                 'nama_barang' => 'Tablet',
                 'stok' => 15,
                 'harga' => 7000000,
-                'category_id' => 3
+                'category_id' => 2
             ],
         ];
 

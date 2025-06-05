@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Models\Transaction;
@@ -16,6 +17,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth:sanctum');
 
     Route::get('/users', [AuthenticatedSessionController::class, 'index']);
+
+    // Report
+    Route::get('/report/download', [ReportController::class, 'generatePDF']);
 
     // endauth
 
@@ -50,7 +54,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // transaction
     Route::apiResource(name: '/transactions', controller: TransactionController::class);
     Route::put('/transaction/{id}', [TransactionController::class, 'update']);
-    Route::delete('/transactionDelete/{id}', action: [Transaction::class, 'destroy']);
+    Route::delete('/transactionDelete/{id}', action: [TransactionController::class, 'destroy']);
 });
 
 Route::post('/register', [RegisteredUserController::class, 'store']);

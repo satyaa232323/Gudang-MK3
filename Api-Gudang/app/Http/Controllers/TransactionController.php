@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use app\Models\notification;
 
 class TransactionController extends Controller
 {
@@ -57,6 +58,10 @@ class TransactionController extends Controller
         }
 
         $product->save();
+
+        // Check if stock is low after transaction
+        $this->checkStockAndNotify($product);
+
         $transaction = Transaction::create($request->all());
 
         return response()->json([
@@ -68,7 +73,23 @@ class TransactionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id) {}
+    public function show(string $id)
+    {
+        $transaction = Transaction::with('product')->find($id);
+
+        if (!$transaction) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Transaction not found',
+                'data' => null
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $transaction
+        ], 200);
+    }
 
     /**
      * Update the specified resource in storage.
@@ -114,6 +135,9 @@ class TransactionController extends Controller
             }
 
             $product->save();
+
+            // Check if stock is low after update
+            $this->checkStockAndNotify($product);
         }
 
         $transaction->update($request->all());
@@ -134,5 +158,19 @@ class TransactionController extends Controller
             'status' => 'Transaksi berhasil dihapus',
             'data' => null
         ], 204);
+    }
+
+    /**
+     * Check stock and create notification if necessary
+     */
+    private function checkStockAndNotify($product)
+    {
+        if ($product->stok < 8) {
+            Notification::create([
+                'id_product' => $product->id,
+                'pesan' => "Stok {$product->nama_barang} hampir habis. Sisa stok: {$product->stok}",
+                'status' => 'unread'
+            ]);
+        }
     }
 }

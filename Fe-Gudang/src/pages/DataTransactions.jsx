@@ -146,8 +146,7 @@ const DataTransactions = () => {
                             </div>
                         ) : filteredTransactions.length === 0 ? (
                             <div className="text-center my-5">
-                                <p className="text-muted">No transactions found</p>
-                                <Link to="/create" className="btn btn-outline-primary">
+                                <p className="text-muted">No transactions found</p>                                <Link to="/createTransaction" className="btn btn-outline-primary">
                                     Add your first transaction
                                 </Link>
                             </div>
@@ -160,7 +159,7 @@ const DataTransactions = () => {
                                             <th>Produk</th>
                                             <th>Jenis Transaksi</th>
                                             <th>Jumlah</th>
-        
+
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -171,15 +170,14 @@ const DataTransactions = () => {
                                                 <td>{products[transaction.id_product] || 'Unknown'}</td>
                                                 <td>{transaction.jenis_transaksi}</td>
                                                 <td>{transaction.jumlah}</td>
-                                                    
+
                                                 <td>
-                                                    <div className="btn-group" role="group">
-                                                        <button
-                                                            className="btn btn-info btn-sm"
-                                                            onClick={() => navigate(`/createTransaction/${transaction.id}`)}
-                                                        >
-                                                            <i className="fas fa-edit"></i>
-                                                        </button>
+                                                    <div className="btn-group" role="group">                                            <button
+                                                        className="btn btn-info btn-sm"
+                                                        onClick={() => navigate(`/createTransaction`, { state: { id: transaction.id } })}
+                                                    >
+                                                        <i className="fas fa-edit"></i>
+                                                    </button>
                                                         <button
                                                             className="btn btn-danger btn-sm"
                                                             onClick={() => setConfirmDelete(transaction.id)}

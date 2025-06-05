@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { createTransaction, getProducts, getTransaction, updateTransaction, getUserProfile, getUsers } from '../utils/apiClient'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CreateTransactions = () => {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const location = useLocation();
+    const id = location.state?.id;
     const isEditing = !!id;
 
     const [loading, setLoading] = useState(false);

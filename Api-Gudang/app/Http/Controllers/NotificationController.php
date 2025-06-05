@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\notification;
+use App\Models\Notification as NotificationModel;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -33,6 +34,18 @@ class NotificationController extends Controller
     }
 
     /**
+     * Create a notification for low stock
+     */
+    public function createLowStockNotification($product)
+    {
+        notification::create([
+            'id_product' => $product->id,
+            'pesan' => "Low stock alert: {$product->name} has only {$product->stok} items remaining!",
+            'status' => 'unread'
+        ]);
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(string $id)
@@ -58,7 +71,7 @@ class NotificationController extends Controller
 
     public function markAsRead($id)
     {
-        $notification = notification::findOrFail($id);
+        $notification = NotificationModel::findOrFail($id);
         $notification->update(['status' => 'read']);
 
         return response()->json([

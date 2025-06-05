@@ -207,11 +207,11 @@ export const createTransaction = (transactionData) => {
 };
 
 export const updateTransaction = (id, transactionData) => {
-    return apiClient.put(`/transaction/${id}`, transactionData);
+    return apiClient.put(`/transactions/${id}`, transactionData);
 };
 
 export const deleteTransaction = (id) => {
-    return apiClient.delete(`/transactionDelete/${id}`);
+    return apiClient.delete(`/transactions/${id}`);
 };
 
 export default apiClient;

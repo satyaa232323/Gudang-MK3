@@ -144,7 +144,7 @@ class ProductController extends Controller
      */
     private function checkStockAndNotify($product)
     {
-        if ($product->stok < 10) {
+        if ($product->stok < 8) {
             // Create notification for low stock
             notification::create([
                 'id_product' => $product->id,

@@ -10,6 +10,7 @@ const DashboardLayout = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [user, setUser] = useState(null);
+  const [notifications, setNotifications] = useState([]);
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalTransactions: 0,
@@ -17,6 +18,28 @@ const DashboardLayout = () => {
     totalCategories: 0
   });
   const navigate = useNavigate();
+
+  const fetchNotifications = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://127.0.0.1:8000/api/notifications', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      });
+      const data = await response.json();
+      setNotifications(data.data || []);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000); // Fetch every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     // Fetch user data
@@ -271,60 +294,61 @@ const DashboardLayout = () => {
                   aria-expanded="false"
                 >
                   <i className="fas fa-bell fa-fw" />
-                  {/* Counter - Alerts */}
-                  <span className="badge badge-danger badge-counter">3+</span>
+                  {notifications.length > 0 && (
+                    <span className="badge badge-danger badge-counter">
+                      {notifications.length}
+                    </span>
+                  )}
                 </a>
-                {/* Dropdown - Alerts */}
                 <div
                   className="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                   aria-labelledby="alertsDropdown"
                 >
                   <h6 className="dropdown-header">Alerts Center</h6>
-                  <a className="dropdown-item d-flex align-items-center" href="#">
-                    <div className="mr-3">
-                      <div className="icon-circle bg-primary">
-                        <i className="fas fa-file-alt text-white" />
+                  {notifications.map((notification) => (
+                    <a
+                      key={notification.id}
+                      className="dropdown-item d-flex align-items-center"
+                      href="#" onClick={async (e) => {
+                        e.preventDefault();
+                        try {
+                          const token = localStorage.getItem('token');
+                          await fetch(`http://127.0.0.1:8000/api/notification/${notification.id}`, {
+                            method: 'PUT',
+                            headers: {
+                              'Authorization': `Bearer ${token}`,
+                              'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ status: 'read' })
+                          });
+                          fetchNotifications(); // Refresh notifications
+                        } catch (error) {
+                          console.error('Error marking notification as read:', error);
+                        }
+                      }}
+                    >
+                      <div className="mr-3">
+                        <div className="icon-circle bg-warning">
+                          <i className="fas fa-exclamation-triangle text-white" />
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <div className="small text-gray-500">December 12, 2019</div>
-                      <span className="font-weight-bold">
-                        A new monthly report is ready to download!
-                      </span>
-                    </div>
-                  </a>
-                  <a className="dropdown-item d-flex align-items-center" href="#">
-                    <div className="mr-3">
-                      <div className="icon-circle bg-success">
-                        <i className="fas fa-donate text-white" />
+                      <div>
+                        <div className="small text-gray-500">
+                          {new Date(notification.created_at).toLocaleDateString()}
+                        </div>
+                        <span className="font-weight-bold">
+                          {notification.pesan}
+                        </span>
                       </div>
-                    </div>
-                    <div>
-                      <div className="small text-gray-500">December 7, 2019</div>
-                      $290.29 has been deposited into your account!
-                    </div>
-                  </a>
-                  <a className="dropdown-item d-flex align-items-center" href="#">
-                    <div className="mr-3">
-                      <div className="icon-circle bg-warning">
-                        <i className="fas fa-exclamation-triangle text-white" />
-                      </div>
-                    </div>
-                    <div>
-                      <div className="small text-gray-500">December 2, 2019</div>
-                      Spending Alert: We've noticed unusually high spending for
-                      your account.
-                    </div>
-                  </a>
-                  <a
-                    className="dropdown-item text-center small text-gray-500"
-                    href="#"
-                  >
-                    Show All Alerts
-                  </a>
+                    </a>
+                  ))}
+                  {notifications.length === 0 && (
+                    <a className="dropdown-item text-center small text-gray-500" href="#">
+                      No notifications
+                    </a>
+                  )}
                 </div>
               </li>
-              {/* Nav Item - Messages */}
               <li className="nav-item dropdown no-arrow mx-1">
                 <a
                   className="nav-link dropdown-toggle"
@@ -532,7 +556,9 @@ const DashboardLayout = () => {
       </div>
 
     </div>
+
   )
 }
+
 
 export default DashboardLayout
